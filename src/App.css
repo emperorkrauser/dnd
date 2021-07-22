@@ -38,9 +38,18 @@
 }
 
 .board {
-  position: absolute;
-  left:0;
-  top: 0;
-  height: 100vh;
+  position: relative;
+  margin: 0 auto;
   width: 250px;
+}
+
+.droppable-container {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+.draggable-item {
+  user-select: none;
+  padding: 15px;
 }

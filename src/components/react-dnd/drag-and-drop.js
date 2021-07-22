@@ -2,30 +2,27 @@ import React, {useEffect, useState} from 'react'
 import {Picture} from './picture';
 import {useDrop} from 'react-dnd';
 
-function DragAndDrop() {
-  const [photos, setPhotos] = useState([]);
+export const DragAndDrop = () => {
+  const pictures = [
+    {
+      "id": 1,
+      "thumbnailUrl": "https://via.placeholder.com/150/92c952",
+      "title": "accusamus beatae ad facilis cum similique qui sunt",
+      "url": "https://via.placeholder.com/600/92c952"},
+    {
+      "id": 2,
+      "thumbnailUrl": "https://via.placeholder.com/150/771796",
+      "title": "reprehenderit est deserunt velit ipsam",
+      "url": "https://via.placeholder.com/600/771796"},
+  ];
+  const [photos, setPhotos] = useState(pictures);
   const [board, setBoard] = useState([]);
-  useEffect(() => {
-    const pictures = [
-      {
-        "id": 1,
-        "thumbnailUrl": "https://via.placeholder.com/150/92c952",
-        "title": "accusamus beatae ad facilis cum similique qui sunt",
-        "url": "https://via.placeholder.com/600/92c952"},
-      {
-        "id": 2,
-        "thumbnailUrl": "https://via.placeholder.com/150/771796",
-        "title": "reprehenderit est deserunt velit ipsam",
-        "url": "https://via.placeholder.com/600/771796"},
-    ];
-    setPhotos(pictures);
-    setBoard([]);
-  }, []);
 
   const [{isOver}, drop] = useDrop(() => ({
     accept: "image",
     drop: (item) => {
       console.log('id', item.id);
+      removeImageFromList(item.id);
       addImageToBoard(item.id);
     },
     collect: (monitor) => ({
@@ -34,7 +31,6 @@ function DragAndDrop() {
   }));
 
   const addImageToBoard = (id) => {
-    console.log('photos', photos);
     if(photos.length) {
       const pictureList = photos.filter((picture) => picture.id === id);
       console.log('add list', pictureList);
@@ -44,6 +40,7 @@ function DragAndDrop() {
   };
 
   const removeImageFromList = (id) => {
+    console.log('remaining photos', photos);
     const pictureList = photos.filter((picture) => picture.id !== id);
     console.log('remove list', pictureList);
     setPhotos(pictureList);
@@ -66,5 +63,3 @@ function DragAndDrop() {
     </>
   )
 }
-
-export default DragAndDrop;
