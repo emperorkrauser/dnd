@@ -7,7 +7,7 @@ function App() {
   return (
     <>
       <div>
-        <DragAndDropMain />      
+        {/* <DragAndDropMain />       */}
       </div>
       <br/>
       <div>

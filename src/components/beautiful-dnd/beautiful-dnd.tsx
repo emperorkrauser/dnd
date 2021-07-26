@@ -1,53 +1,56 @@
 import React, { useState } from 'react';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import { convertTypeAcquisitionFromJson } from 'typescript';
 import {v4 as uuidv4} from 'uuid';
 
 const itemsFromBackend = [
   { id: uuidv4(), content: "First task" },
   { id: uuidv4(), content: "Second task" },
-  { id: uuidv4(), content: "Third task" },
-  { id: uuidv4(), content: "Fourth task" },
-  { id: uuidv4(), content: "Fifth task" }
 ];
 
 const columnsFromBackend = {
   [uuidv4()]: {
-    name: "Requested",
+    name: "To Do",
     items: itemsFromBackend
-  },
-  [uuidv4()]: {
-    name: "To do",
-    items: []
   },
   [uuidv4()]: {
     name: "In Progress",
     items: []
   },
-  [uuidv4()]: {
-    name: "Done",
-    items: []
-  }
+};
+
+const onDragEnd = (result: any, columns: any, setColumns: any) => {
+  console.log('result', result);
+  if(!result.destination) return;
+  const {source , destination} = result;
+  const column = columns[source.droppableId];
+  const copiedItems = [...column.items];
+  const [removed] = copiedItems.splice(source.index, 1);
+  copiedItems.splice(destination.index, 0, removed);
+  setColumns({
+    ...columns,
+    [source.droppableId]: {
+      ...column,
+      items: copiedItems
+    }
+  })
 };
 
 export const BeautifulDnd = () => {
   const [columns, setColumns] = useState(columnsFromBackend);
   return (
-    <DragDropContext onDragEnd={() => console.log('drag end')}>
+    <DragDropContext onDragEnd={(result) => onDragEnd(result, columns, setColumns)}>
       {Object.entries(columns).map(([columnId, column], index) => {
         return (
           <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center"
-            }}
+            className="drop-column"
             key={columnId}
           >
-            <h2>{column.name}</h2>
-            <div style={{ margin: 8 }}>
+            <div>{column.name}</div>
               <Droppable droppableId={columnId} key={columnId}>
                 {(provided, snapshot) => {
                   return (
+                    <>
                     <div
                       {...provided.droppableProps}
                       ref={provided.innerRef}
@@ -57,11 +60,11 @@ export const BeautifulDnd = () => {
                           : "lightgrey",
                         padding: 4,
                         width: 250,
-                        minHeight: 500
+                        minHeight: 500,
+
                       }}
                     >
                       {column.items.map((item, index) => {
-                        console.log('item', item);
                         return (
                           <Draggable
                             key={item.id}
@@ -95,10 +98,10 @@ export const BeautifulDnd = () => {
                       })}
                       {provided.placeholder}
                     </div>
+                    </>
                   );
                 }}
               </Droppable>
-            </div>
           </div>
         );
       })}
